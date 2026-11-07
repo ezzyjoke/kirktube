@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KIRKTUBE — CURSED VIDEO PLAYER</title>
+  <meta name="description" content="KIRKTUBE: MAKING SIMPLE THINGS UNNECESSARILY DIFFICULT SINCE FOREVER." />
+  <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg" />
+
+  <!-- TAILWIND (CDN, PROTOTYPE SETUP) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    if (window.tailwind) {
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              toxic: '#39ff14',
+              hex: '#b026ff',
+              danger: '#ff2e4d',
+              void: '#07070a',
+              charcoal: '#0f1014',
+              panel: '#15161c',
+              line: '#262833',
+            },
+          },
+        },
+      };
+    }
+  </script>
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="buggy-ui">
+
+  <!-- ===================================================== -->
+  <!-- BOOT / OPENING SCREEN                                 -->
+  <!-- ===================================================== -->
+  <section id="boot-screen" class="screen bg-grid scanlines vignette" aria-label="OPENING SCREEN">
+    <div class="relative z-10 flex flex-col items-center text-center px-6">
+      <img src="assets/images/logo.svg" alt="KIRKTUBE LOGO" class="boot-logo buggy-tilt" />
+      <p class="mt-6 text-xs tracking-[0.4em] text-zinc-500 font-mono-x">KIRKTUBE CORP™ PRESENTS</p>
+      <h1 class="boot-title glitch mt-2" data-text="KIRKTUBE">KIRKTUBE</h1>
+      <p class="boot-slogan mt-2">MAKING SIMPLE THINGS UNNECESSARILY DIFFICULT SINCE FOREVER.</p>
+
+      <div class="mt-10 flex flex-col items-center gap-3" id="boot-loader">
+        <div class="boot-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <i id="boot-bar-fill"></i>
+        </div>
+        <p id="boot-status" class="font-mono-x text-xs text-zinc-400 h-4">INITIALIZING…</p>
+      </div>
+
+      <button id="btn-start" class="btn-start mt-10 is-hidden" type="button">
+        ▶&nbsp; PRESS START TO BEGIN
+      </button>
+      <p id="boot-hint" class="mt-4 text-[11px] text-zinc-600 font-mono-x is-hidden">
+        AUDIO &amp; VOICES WILL BE ENABLED WHEN YOU PRESS START.
+      </p>
+    </div>
+
+    <div class="boot-footer font-mono-x">
+      <span id="boot-version">V—</span>
+      <span>© 1997–∞ KIRKTUBE INC. ALL WRONGS RESERVED.</span>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- RPG INTRO                                             -->
+  <!-- ===================================================== -->
+  <section id="intro-screen" class="screen intro is-hidden" aria-label="INTRODUCTION">
+    <div class="stars"></div>
+    <div class="stars stars-2"></div>
+
+    <button id="btn-skip-intro" class="intro-skip" type="button">SKIP PROLOGUE ⏭</button>
+
+    <div class="relative z-10 flex flex-col items-center w-full h-full justify-between py-10">
+      <p id="intro-chapter" class="intro-chapter font-mono-x">CHAPTER 0 — THE PROLOGUE NOBODY ASKED FOR</p>
+
+      <div id="intro-portrait" class="intro-portrait"></div>
+
+      <div id="intro-box" class="rpg-box">
+        <div id="intro-name" class="rpg-name">???</div>
+        <p id="intro-title" class="rpg-title font-mono-x"></p>
+        <p id="intro-text" class="rpg-text"></p>
+        <span class="rpg-next" aria-hidden="true">▼</span>
+        <span class="rpg-hint font-mono-x">[CLICK] / [ENTER] CONTINUE · [ESC] SKIP</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- MANDATORY INVERTED-SCROLL TERMS OF SERVICE SCREEN     -->
+  <!-- ===================================================== -->
+  <section id="tos-screen" class="screen tos-screen is-hidden" role="dialog" aria-modal="true" aria-label="KIRKTUBE TERMS OF SERVICE">
+    <div class="tos-card">
+      <div class="tos-header">
+        <div class="flex items-center gap-3">
+          <img src="duckflow.png" alt="DUCKFLOW" class="w-11 h-11 rounded-full border-2 border-hex" />
+          <div>
+            <div class="text-xs font-mono-x text-danger tracking-widest">⚖ MANDATORY LEGAL ROADBLOCK // CLICK-THROUGH BLOCKED</div>
+            <h2 class="text-xl font-black text-white glitch" data-text="KIRKTUBE END-USER SUFFERING AGREEMENT (TOS V99.4)">KIRKTUBE END-USER SUFFERING AGREEMENT (TOS V99.4)</h2>
+          </div>
+        </div>
+        <span id="tos-progress-pill" class="tos-progress-pill font-mono-x">READ PROGRESS: 0%</span>
+      </div>
+
+      <div class="tos-Subbanner font-mono-x">
+        ⚠ NOTICE: YOU MUST READ AND SCROLL ALL THE WAY TO THE BOTTOM OF THIS 42-SECTION CONTRACT TO UNLOCK THE ACCEPT BUTTON.
+        (HINT: OUR ENGINEERS INVERTED THE SCROLL WHEEL BECAUSE NORMAL SCROLLING IS TOO EASY.)
+      </div>
+
+      <!-- INVERTED SCROLL CONTAINER -->
+      <div id="tos-scroll-box" class="tos-scroll-box font-mono-x" tabindex="0" aria-label="TERMS OF SERVICE DOCUMENT">
+        <div id="tos-content" class="tos-content"></div>
+      </div>
+
+      <div class="tos-footer">
+        <label class="tos-checkbox-wrap font-mono-x">
+          <input id="tos-checkbox" type="checkbox" disabled />
+          <span id="tos-checkbox-label">I HAVE SCROLLED TO 100% AND SURRENDER MY SANITY TO DUCKFLOW, VERITY &amp; EINSTEIN</span>
+        </label>
+        <div class="flex items-center gap-3">
+          <button id="btn-tos-decline" type="button" class="btn-ghost text-xs font-mono-x">DECLINE (ILLEGAL)</button>
+          <button id="btn-tos-accept" type="button" class="tos-accept-btn font-mono-x" disabled>
+            🔒 SCROLL TO BOTTOM TO ACCEPT (0%)
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- MANDATORY "ARE YOU A LIABILITY OR AN ASSET?" SCREEN   -->
+  <!-- ===================================================== -->
+  <section id="liability-screen" class="screen liability-screen is-hidden" role="dialog" aria-modal="true" aria-label="ARE YOU A LIABILITY OR AN ASSET">
+    <div class="liability-card">
+      <div class="tos-header">
+        <div class="flex items-center gap-3">
+          <img src="verity.png" alt="VERITY" class="w-11 h-11 rounded-full border-2 border-toxic" />
+          <div>
+            <div class="text-xs font-mono-x text-danger tracking-widest">📋 MANDATORY HR AUDIT // PICK ONE</div>
+            <h2 class="text-xl font-black text-white glitch" data-text="ARE YOU A LIABILITY OR AN ASSET?">ARE YOU A LIABILITY OR AN ASSET?</h2>
+          </div>
+        </div>
+        <span id="liability-count-pill" class="tos-progress-pill font-mono-x">2 CHOICES</span>
+      </div>
+
+      <div class="tos-Subbanner font-mono-x">
+        ⚠ KIRKTUBE HR REQUIRES YOU TO ANSWER THIS SIMPLE QUESTION BEFORE ENTERING PLINKO: <b>ARE YOU A LIABILITY OR AN ASSET?</b>
+      </div>
+
+      <div id="liability-color-grid" class="liability-two-grid font-mono-x" role="radiogroup" aria-label="LIABILITY OR ASSET CHOICES"></div>
+
+      <div class="tos-footer">
+        <div id="liability-verdict" class="liability-verdict font-mono-x">
+          ❌ NO CHOICE SELECTED YET — PICK "LIABILITY" OR "ASSET" ABOVE!
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="btn-liability-confirm" type="button" class="tos-accept-btn font-mono-x" disabled>
+            🔒 SELECT LIABILITY OR ASSET FIRST
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- MANDATORY POST-TOS PLINKO FATE SELECTOR SCREEN        -->
+  <!-- ===================================================== -->
+  <section id="plinko-screen" class="screen plinko-screen is-hidden" role="dialog" aria-modal="true" aria-label="KIRKTUBE PLINKO LAUNCHER">
+    <div class="plinko-card">
+      <div class="plinko-header">
+        <div class="flex items-center gap-3">
+          <img src="duckflow.png" alt="DUCKFLOW" class="w-11 h-11 rounded-full border-2 border-hex" />
+          <div>
+            <div class="text-xs font-mono-x text-toxic tracking-widest">🎰 STEP 3 OF 3 // MANDATORY SESSION FATE PLINKO</div>
+            <h2 class="text-xl font-black text-white glitch" data-text="KIRKTUBE PLINKO OF DESTINY™">KIRKTUBE PLINKO OF DESTINY™</h2>
+          </div>
+        </div>
+        <span id="plinko-odds-pill" class="plinko-odds-pill font-mono-x">100% PROVABLY UNFAIR™</span>
+      </div>
+
+      <div class="plinko-subbanner font-mono-x">
+        ⚠ CLICK ANYWHERE ON THE TOP BAR OR PRESS "DROP PLINKO ORB" TO ROLL FOR YOUR PLAYBACK SETTINGS!
+        SLOTS INCLUDE: <b>PLAY WHILE MUTED</b>, <b>PLAY NORMALLY</b>, <b>DELETE ACCOUNT</b>, AND <b>LEAK CREDIT CARD NUMBER</b>!
+      </div>
+
+      <div class="plinko-stage-wrap">
+        <canvas id="plinko-canvas" class="plinko-canvas" width="780" height="420"></canvas>
+      </div>
+
+      <div class="plinko-footer font-mono-x">
+        <div id="plinko-status" class="plinko-status">
+          🎯 AIM THE DROPPER AT THE TOP OF THE BOARD AND DROP THE DUCKFLOW ORB!
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="btn-plinko-drop" type="button" class="plinko-drop-btn">
+            🔴 DROP PLINKO ORB!
+          </button>
+          <button id="btn-plinko-continue" type="button" class="tos-accept-btn" disabled>
+            🔒 DROP ORB FIRST TO ENTER KIRKTUBE
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- MAIN APPLICATION                                      -->
+  <!-- ===================================================== -->
+  <div id="app" class="is-hidden scanlines">
+
+    <!-- HEADER -->
+    <header class="app-header buggy-header">
+      <div class="flex items-center gap-3 min-w-0">
+        <img src="assets/images/logo.svg" alt="KIRKTUBE" class="w-9 h-9 logo-glow buggy-wobble" />
+        <div class="leading-tight">
+          <div class="font-black tracking-tight text-white text-lg glitch" data-text="KIRKTUBE">KIRK<span class="text-toxic">TUBE</span></div>
+          <div class="text-[10px] text-zinc-500 font-mono-x tracking-widest">CURSED STREAMING ENGINE™</div>
+        </div>
+        <span id="header-version" class="version-chip font-mono-x">V—</span>
+        <span class="buggy-tag font-mono-x">ERR_UI_DESYNC: TRUE</span>
+      </div>
+
+      <form id="search-form" class="search buggy-skew" role="search" autocomplete="off">
+        <svg viewBox="0 0 24 24" class="w-4 h-4 text-zinc-500"><path fill="none" stroke="currentColor" stroke-width="2" d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm9 16-4.35-4.35"/></svg>
+        <input id="search-input" type="search" placeholder="SEARCH KIRKTUBE VIDEOS…" aria-label="SEARCH VIDEOS" />
+      </form>
+
+      <div class="flex items-center gap-2">
+        <button id="btn-voice-toggle" type="button" class="voice-chip cursed-btn cursed-tilt-l font-mono-x" title="DO NOT DARE SILENCE US">
+          📢 YAPPING: ON
+        </button>
+        <button id="btn-voice-stop" type="button" class="voice-chip warn cursed-btn dodge-btn font-mono-x" title="TRY TO STOP US (GOOD LUCK)">
+          🛑 BEG FOR SILENCE
+        </button>
+        <span id="mode-badge" class="mode-badge font-mono-x">FREE PLAY [UNSTABLE]</span>
+        <div class="user-chip" title="THIS IS YOU. PROBABLY.">YOU</div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main id="app-main" class="app-main">
+
+      <!-- STAGE: VIDEO + INFO -->
+      <section id="stage" class="stage" aria-label="VIDEO STAGE">
+        <div id="player-shell" class="player-shell buggy-frame">
+          <div class="buggy-corner-badge font-mono-x">BUFFER_UNDERRUN // 0XDEAD</div>
+          <div id="video-wrap" class="video-wrap">
+            <video id="video" preload="metadata" playsinline>
+              <track id="subtitle-track" kind="subtitles" srclang="en" label="ENGLISH [KIRKTUBE]" src="assets/subtitles.vtt" default />
+            </video>
+
+            <!-- CUSTOM SUBTITLE OVERLAY + AI LIVE COMMENTARY BANNER -->
+            <div id="subtitle-overlay" class="subtitle-overlay" aria-live="off">
+              <div id="subtitle-box" class="subtitle-box is-hidden"></div>
+              <div id="subtitle-ai-react" class="subtitle-ai-react is-hidden"></div>
+            </div>
+
+            <!-- EINSTEIN'S LIVE RED-MARKER CONSPIRACY DRAWINGS OVERLAY -->
+            <div id="einstein-conspiracy-layer" class="einstein-conspiracy-layer is-hidden" aria-hidden="true">
+              <div class="einstein-conspiracy-badge font-mono-x">
+                <img src="Einstein.png" alt="EINSTEIN" class="w-5 h-5 rounded-full border border-danger" />
+                <span id="einstein-conspiracy-title">🖍 EINSTEIN RED-MARKER ANALYSIS // LIVE</span>
+              </div>
+              <canvas id="einstein-conspiracy-canvas" class="einstein-conspiracy-canvas" width="960" height="540"></canvas>
+            </div>
+
+            <!-- IN-PLAYER AI INTERRUPTION POPUP / DIALOGUE CHOICE MODAL -->
+            <div id="interruption-modal" class="interruption-modal is-hidden" role="dialog" aria-modal="true" aria-label="AI INTERRUPTION">
+              <div class="interruption-card">
+                <div class="interruption-head">
+                  <div id="interruption-avatar" class="interruption-avatar"></div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span id="interruption-speaker" class="interruption-speaker">DUCKFLOW</span>
+                      <span id="interruption-badge" class="interruption-badge font-mono-x">⚡ INTERRUPTED PLAYBACK</span>
+                    </div>
+                    <div id="interruption-role" class="interruption-role font-mono-x">THE OVERDRAMATIC NARRATOR</div>
+                  </div>
+                  <span id="interruption-lock" class="interruption-lock font-mono-x">🔒 MANDATORY — PICK AN ANSWER</span>
+                </div>
+                <div id="interruption-quote" class="interruption-quote font-mono-x is-hidden"></div>
+                <p id="interruption-text" class="interruption-text"></p>
+                <div id="interruption-choices" class="interruption-choices"></div>
+              </div>
+            </div>
+
+            <!-- KEYBOARD SHORTCUTS TERRIBLE HELP OVERLAY -->
+            <div id="shortcuts-modal" class="shortcuts-modal is-hidden" role="dialog" aria-label="KEYBOARD SHORTCUTS">
+              <div class="shortcuts-card">
+                <div class="flex items-center justify-between border-b border-line pb-2 mb-3">
+                  <h3 class="text-sm font-black text-toxic tracking-wider">⌨ KIRKTUBE "HELPFUL" SHORTCUTS MANUAL (V0.4.04)</h3>
+                  <button id="btn-close-shortcuts" type="button" class="btn-ghost text-xs">CLOSE [?]</button>
+                </div>
+                <p class="text-[11px] text-zinc-400 mb-3 font-mono-x">
+                  WARNING: MEMORIZING THESE KEYS MAY VOID YOUR WARRANTY. PLAY BUTTON NEVER MOVES.
+                </p>
+                <div class="shortcuts-grid font-mono-x">
+                  <div><kbd>SPACE</kbd> / <kbd>K</kbd></div><div>PLAY / PAUSE SACRED RECTANGLE</div>
+                  <div><kbd>←</kbd> / <kbd>→</kbd></div><div>SEEK ±5 SECONDS THROUGH TIME</div>
+                  <div><kbd>↑</kbd> / <kbd>↓</kbd></div><div>VOLUME ±10% (WAKE THE NEIGHBORS)</div>
+                  <div><kbd>,</kbd> / <kbd>.</kbd></div><div>FRAME STEP BACK / FORWARD (WHEN PAUSED)</div>
+                  <div><kbd>M</kbd></div><div>MUTE / UNMUTE VIDEO AUDIO</div>
+                  <div><kbd>C</kbd></div><div>TOGGLE SUBTITLES &amp; AI CAPTION ROASTS</div>
+                  <div><kbd>T</kbd></div><div>TOGGLE THEATER MODE</div>
+                  <div><kbd>F</kbd></div><div>TOGGLE FULLSCREEN</div>
+                  <div><kbd>L</kbd></div><div>TOGGLE ETERNAL LOOP</div>
+                  <div><kbd>S</kbd></div><div>CAPTURE CURSED SCREENSHOT</div>
+                  <div><kbd>I</kbd></div><div>FORCE AN AI INTERRUPTION RIGHT NOW</div>
+                  <div><kbd>?</kbd></div><div>OPEN / CLOSE THIS TERRIBLE HELP PANEL</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SCREENSHOT FLASH + PREVIEW -->
+            <div id="screenshot-flash" class="screenshot-flash is-hidden"></div>
+
+            <!-- LOADING SPINNER -->
+            <div id="video-loading" class="video-loading" aria-live="polite">
+              <div class="spinner"></div>
+              <p class="font-mono-x text-xs text-zinc-400 mt-3">LOCATING VIDEO SOURCE…</p>
+            </div>
+
+            <!-- MISSING VIDEO PLACEHOLDER -->
+            <div id="video-placeholder" class="video-placeholder is-hidden" role="status">
+              <div class="ph-icon buggy-jitter">
+                <svg viewBox="0 0 64 64" class="w-14 h-14"><rect x="6" y="14" width="52" height="36" rx="6" fill="none" stroke="currentColor" stroke-width="3"/><path d="M27 24v16l13-8z" fill="currentColor"/><path d="M8 56 56 8" stroke="#ff2e4d" stroke-width="4" stroke-linecap="round"/></svg>
+              </div>
+              <h2 class="text-xl font-bold text-white mt-4 glitch" data-text="NO VIDEO SOURCE FOUND">NO VIDEO SOURCE FOUND</h2>
+              <p class="text-sm text-zinc-400 mt-2 max-w-md">
+                KIRKTUBE COULDN'T LOAD A VIDEO. TO PLAY ONE, PLACE AN MP4 FILE AT:
+              </p>
+              <code id="ph-path" class="ph-path">ASSETS/DEMO-PLACEHOLDER.MP4</code>
+              <p class="text-xs text-zinc-500 mt-2 max-w-md">
+                THEN PRESS <b>RETRY</b> (OR RELOAD THE PAGE). EVERYTHING ELSE — DUCKFLOW, VERITY, EINSTEIN,
+                DIALOGUE, CHAOS AND ENDINGS — STILL WORKS WITHOUT A VIDEO.
+              </p>
+              <p id="ph-reason" class="text-[11px] text-zinc-600 font-mono-x mt-2"></p>
+              <button id="btn-retry-video" type="button" class="btn-ghost mt-4">↻ RETRY LOADING VIDEO</button>
+            </div>
+
+            <!-- BIG CENTER PLAY BUTTON (STATIONARY — NEVER MOVES) -->
+            <button id="big-play" class="big-play is-hidden" type="button" aria-label="PLAY VIDEO">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+            </button>
+
+            <!-- CONTROLS -->
+            <div id="controls" class="controls">
+              <!-- TIMELINE WITH HOVER PREVIEW AND AI EVENT MARKERS -->
+              <div id="progress" class="progress" role="slider" aria-label="SEEK" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+                <div id="progress-buffer" class="progress-buffer"></div>
+                <div id="progress-fill" class="progress-fill"></div>
+                <div id="progress-markers" class="progress-markers"></div>
+                <div id="progress-thumb" class="progress-thumb"></div>
+                <div id="progress-hover" class="progress-hover is-hidden">
+                  <span id="progress-hover-time" class="font-mono-x">0:00</span>
+                  <span id="progress-hover-tag" class="progress-hover-tag"></span>
+                </div>
+              </div>
+
+              <div class="ctrl-row">
+                <!-- PLAY BUTTON: HARD RESTRICTION — THIS BUTTON IS 100% UNCHANGED AND NEVER MOVES -->
+                <button id="btn-play" class="ctrl-btn play-locked" type="button" aria-label="PLAY" title="PLAY [SPACE]">
+                  <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+                  <svg class="icon-pause is-hidden" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>
+                </button>
+
+                <!-- CURSED BUTTONS (EVERY BUTTON OTHER THAN PLAY IS ANNOYING & CURSED) -->
+                <button id="btn-frame-prev" class="ctrl-btn cursed-btn cursed-tilt-l" type="button" aria-label="PREVIOUS FRAME" title="DO NOT CLICK THIS (UN-FRAMES THE VIDEO)">
+                  ⏪ UN-FRAME
+                </button>
+                <button id="btn-frame-next" class="ctrl-btn cursed-btn cursed-tilt-r" type="button" aria-label="NEXT FRAME" title="DEFINITELY NOT A VIRUS">
+                  ⏩ RE-FRAME?
+                </button>
+
+                <!-- MUTE (TRIGGERS FIND WALDO CAPTCHA TO UNMUTE) + GRAVITY-BASED VOLUME SLIDER -->
+                <button id="btn-mute" class="ctrl-btn cursed-btn dodge-btn" type="button" aria-label="MUTE / UNMUTE CAPTCHA" title="CLICK TO MUTE OR TRIGGER WALDO SECURITY CAPTCHA TO UNMUTE">
+                  <svg class="icon-vol" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <svg class="icon-muted is-hidden" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="m16 9 5 6m0-6-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <span id="mute-btn-label" class="cursed-btn-label font-mono-x">EARBLEED</span>
+                </button>
+
+                <div id="gravity-vol-wrap" class="gravity-vol-wrap" title="GRAVITY-BASED VOLUME SEESAW: TILT THE BEAM OR PUMP VOLUME BEFORE GRAVITY DRAINS IT!">
+                  <button id="btn-tilt-left" type="button" class="gravity-mini-btn font-mono-x" title="TILT VOLUME BEAM DOWN-LEFT (DRAINS VOLUME)">↙</button>
+                  <div id="gravity-vol-beam" class="gravity-vol-beam">
+                    <input id="vol-slider" class="vol-slider gravity-slider" type="range" min="0" max="1" step="0.01" value="0.85" aria-label="GRAVITY VOLUME" />
+                    <span class="gravity-fulcrum" aria-hidden="true">▲</span>
+                  </div>
+                  <button id="btn-tilt-right" type="button" class="gravity-mini-btn font-mono-x" title="TILT VOLUME BEAM DOWN-RIGHT (INCREASES VOLUME)">↗</button>
+                  <button id="btn-vol-pump" type="button" class="gravity-pump-btn font-mono-x" title="LAUNCH VOLUME AGAINST GRAVITY!">⛽ PUMP</button>
+                  <span id="vol-gravity-readout" class="vol-gravity-readout font-mono-x">85% ∠-8°</span>
+                </div>
+
+                <span id="time-display" class="time">0:00 / 0:00</span>
+
+                <span class="flex-1"></span>
+
+                <!-- PLAYBACK SPEED -->
+                <button id="btn-speed" class="ctrl-chip cursed-btn cursed-wobble-btn font-mono-x" type="button" title="TIME TRAVEL MULTIPLIER">🐌 1X [SLOW?]</button>
+
+                <!-- LOOP -->
+                <button id="btn-loop" class="ctrl-chip cursed-btn cursed-tilt-l font-mono-x" type="button" aria-pressed="false" title="TRAP YOURSELF IN PURGATORY">♾ PURGATORY: OFF</button>
+
+                <!-- SUBTITLES (CC) -->
+                <button id="btn-cc" class="ctrl-chip cursed-btn cursed-glare font-mono-x active" type="button" aria-pressed="true" title="YELLING TEXT OVERLAY">🤬 YELL-TEXT: ON</button>
+
+                <!-- EINSTEIN RED MARKER CONSPIRACY TRIGGER -->
+                <button id="btn-conspiracy" class="ctrl-chip cursed-btn cursed-tilt-r font-mono-x" type="button" title="SUMMON EINSTEIN'S RED-MARKER CONSPIRACY ANALYSIS">🖍 EINSTEIN MARKER</button>
+
+                <!-- SCREENSHOT -->
+                <button id="btn-screenshot" class="ctrl-btn cursed-btn dodge-btn" type="button" aria-label="SCREENSHOT" title="STEAL NFTS OF THIS FRAME">👁 STEAL PIXEL</button>
+
+                <!-- PICTURE IN PICTURE -->
+                <button id="btn-pip" class="ctrl-btn cursed-btn cursed-tilt-r" type="button" aria-label="PICTURE IN PICTURE" title="SHRINK RAY">🤏 TINY BOX</button>
+
+                <!-- THEATER MODE -->
+                <button id="btn-theater" class="ctrl-btn cursed-btn cursed-tilt-l" type="button" aria-pressed="false" aria-label="THEATER MODE" title="CRUSH THE SIDEBAR">🧱 SQUISH UI</button>
+
+                <!-- FULLSCREEN -->
+                <button id="btn-fullscreen" class="ctrl-btn cursed-btn dodge-btn" type="button" aria-label="FULLSCREEN" title="NO ESCAPE MODE">🚨 TRAP SCREEN</button>
+
+                <!-- KEYBOARD SHORTCUTS HELP -->
+                <button id="btn-shortcuts" class="ctrl-btn cursed-btn cursed-spin-hover" type="button" aria-label="SHORTCUTS" title="USELESS MANUAL">💀 HALP?!</button>
+
+                <span id="player-status" class="player-status font-mono-x">LOADING</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIDEO INFO -->
+        <div class="video-info buggy-panel">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h2 class="video-title glitch" data-text="WORLD'S SHORTEST UI/UX DESIGN COURSE [KIRKTUBE EDITION]">WORLD'S SHORTEST UI/UX DESIGN COURSE [KIRKTUBE EDITION]</h2>
+            <span class="interruption-status-pill font-mono-x">⚡ AI INTERRUPTIONS: CONSTANT [USER CONTROL DISABLED]</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-4 mt-3">
+            <div class="flex items-center gap-3">
+              <img src="assets/images/logo.svg" alt="KIRKTUBE" class="w-10 h-10 rounded-full bg-black p-1 border border-line" />
+              <div class="leading-tight">
+                <div class="text-sm font-semibold text-white">KIRKTUBE OFFICIAL <span class="text-toxic">✔</span></div>
+                <div class="text-xs text-zinc-500">4.04M SUBSCRIBERS · 99% BOTS</div>
+              </div>
+              <button id="btn-subscribe" type="button" class="btn-subscribe cursed-btn dodge-btn">💸 GIVE US MONEY (SUBSCRIBE)</button>
+            </div>
+            <span class="flex-1"></span>
+            <button id="btn-like" type="button" class="btn-pill cursed-btn cursed-wobble-btn" aria-pressed="false">
+              🤡 <span id="like-count">1,337</span> REGRETS
+            </button>
+          </div>
+          <div class="video-desc">
+            <p class="text-xs text-zinc-400"><b class="text-zinc-300">1.2B VIEWS · 3:00 CUT · SUBTITLES: ACTIVE (87 CUES) · AI INTERRUPTIONS: MAXIMUM</b></p>
+            <p class="text-sm text-zinc-300 mt-1">
+              WELCOME TO <b>KIRKTUBE</b>. YOU ARE WATCHING A UI/UX DESIGN COURSE INSIDE THE MOST CURSED UI/UX EVER BUILT.
+              <b>DUCKFLOW</b>, <b>VERITY</b>, AND <b>EINSTEIN</b> ARE READING THE SUBTITLES IN REAL TIME AND WILL INTERRUPT THIS VIDEO CONSTANTLY.
+              <span class="text-toxic font-mono-x">GUARANTEE: THE PLAY BUTTON DOES NOT MOVE.</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- AI SIDEBAR -->
+      <aside id="ai-sidebar" class="sidebar buggy-sidebar" aria-label="AI COMPANIONS">
+        <div class="sidebar-head">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm font-bold text-white tracking-wide glitch" data-text="KIRKTUBE AI COUNCIL">KIRKTUBE AI COUNCIL</div>
+              <div class="text-[10px] font-mono-x text-zinc-500">READING SUBTITLES · INTERRUPTING OFTEN</div>
+            </div>
+            <span class="live-dot font-mono-x">● LIVE</span>
+          </div>
+        </div>
+        <div id="ai-roster" class="roster"></div>
+        <div id="chat-log" class="chat-log" aria-live="polite"></div>
+        <div class="sidebar-foot font-mono-x">
+          <span id="chat-stats">0 MESSAGES</span>
+          <span id="interruption-counter">INTERRUPTIONS: 0</span>
+        </div>
+      </aside>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="app-footer font-mono-x">
+      <span>© 1997–∞ KIRKTUBE INC. ALL WRONGS RESERVED.</span>
+      <span id="footer-version">KIRKTUBE</span>
+      <span>PLAY BUTTON: STATIONARY · SUBTITLES: MONITORED BY AI</span>
+    </footer>
+
+    <!-- LAYERS FOR FUTURE CURSED UI -->
+    <div id="cursed-layer" class="cursed-layer" aria-live="polite"></div>
+
+    <!-- ===================================================== -->
+    <!-- KIRKTUBE ULTRA+ PAYWALL / SUBSCRIPTION PAGE OVERLAY     -->
+    <!-- ===================================================== -->
+    <section id="subscription-modal" class="subscription-modal is-hidden" role="dialog" aria-modal="true" aria-label="KIRKTUBE SUBSCRIPTION PAYWALL">
+      <div class="sub-page-card">
+        <div class="sub-page-banner font-mono-x">
+          <span>🚨 FREE VIEWING QUOTA EXCEEDED // MANDATORY MONETIZATION EVENT</span>
+          <span id="sub-timer-badge" class="sub-timer-badge">PRICE INCREASES IN 00:09</span>
+        </div>
+
+        <div class="sub-page-header">
+          <div class="sub-logo-row">
+            <img src="assets/images/logo.svg" alt="KIRKTUBE" class="w-10 h-10 logo-glow" />
+            <div>
+              <h2 class="sub-page-title glitch" data-text="UPGRADE TO KIRKTUBE ULTRA+ PRO MAX™">UPGRADE TO KIRKTUBE ULTRA+ PRO MAX™</h2>
+              <p class="sub-page-sub font-mono-x">BECAUSE WATCHING A 3-MINUTE VIDEO FOR FREE IS STEALING FROM OUR AI OVERLORDS.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 RIDICULOUS PRICING TIERS -->
+        <div class="sub-tiers-grid">
+          <!-- TIER 1 -->
+          <div class="sub-tier">
+            <div class="sub-tier-tag font-mono-x">CURRENT PLAN (PEASANT)</div>
+            <div class="sub-tier-name">KIRKTUBE BASIC</div>
+            <div class="sub-tier-price">$0.00<span>/SEC</span></div>
+            <ul class="sub-tier-list font-mono-x">
+              <li>✔ CONSTANT AI INTERRUPTIONS</li>
+              <li>✔ PHANTOM DOOR KNOCKS EVERY 11S</li>
+              <li>✔ THIS PAYWALL POPS UP RANDOMLY</li>
+              <li>✖ ZERO RESPECT FROM VERITY</li>
+              <li>✖ EINSTEIN LOGS YOUR IP ADDRESS</li>
+            </ul>
+            <button type="button" class="sub-tier-btnghost" data-plan="PEASANT TIER ($0)">STAY A PEASANT</button>
+          </div>
+
+          <!-- TIER 2 (RECOMMENDED) -->
+          <div class="sub-tier featured">
+            <div class="sub-tier-ribbon font-mono-x">🔥 MOST REGRETTED</div>
+            <div class="sub-tier-tag font-mono-x">BEST VALUE FOR MASOCHISTS</div>
+            <div class="sub-tier-name">KIRKTUBE ULTRA+</div>
+            <div class="sub-tier-price">$49.99<span>/MINUTE WATCHED</span></div>
+            <ul class="sub-tier-list font-mono-x">
+              <li>✔ 10% MORE DRAMATIC NARRATION BY DUCKFLOW</li>
+              <li>✔ VERITY INSULTS YOU IN 4K RESOLUTION</li>
+              <li>✔ DOOR KNOCKS UPGRADED TO DOLBY ATMOS</li>
+              <li>✔ PLAY BUTTON STILL NEVER MOVES</li>
+              <li>✔ NO ADS (EXCEPT THIS GIANT PAYWALL)</li>
+            </ul>
+            <button type="button" class="sub-tier-btnprimary" data-plan="KIRKTUBE ULTRA+ ($49.99/MIN)">SUBSCRIBE &amp; PAY $49.99/MIN</button>
+          </div>
+
+          <!-- TIER 3 -->
+          <div class="sub-tier enterprise">
+            <div class="sub-tier-tag font-mono-x">FOR BILLIONAIRES &amp; BOTS</div>
+            <div class="sub-tier-name">KIRKTUBE SOUL-BIND™</div>
+            <div class="sub-tier-price">1 SOUL<span> + $999.99/MO</span></div>
+            <ul class="sub-tier-list font-mono-x">
+              <li>✔ LEGALLY ADOPT EINSTEIN AS YOUR ROOMMATE</li>
+              <li>✔ UNLOCK SECRET CORRUPTED CACHE CLUES</li>
+              <li>✔ 24/7 UNSKIPPABLE AI SURVEILLANCE</li>
+              <li>✔ AUTOMATICALLY RE-BILLS YOUR GRANDCHILDREN</li>
+              <li>✔ NON-REFUNDABLE ACROSS ALL TIMELINES</li>
+            </ul>
+            <button type="button" class="sub-tier-btndanger" data-plan="KIRKTUBE SOUL-BIND ($999.99 + 1 SOUL)">PLEDGE YOUR MORTAL SOUL</button>
+          </div>
+        </div>
+
+        <div class="sub-page-footer">
+          <button id="btn-sub-shame" type="button" class="sub-shame-btn font-mono-x">
+            NO THANKS, I ENJOY BEING POOR AND HATING GOOD UI/UX (CLOSE FOR NOW)
+          </button>
+          <p class="sub-fine-print font-mono-x">
+            *BY CLICKING ANY BUTTON ON THIS SCREEN, YOU AGREE THAT THIS SUBSCRIPTION PAGE WILL POP UP AGAIN RANDOMLY WHENEVER IT FEELS LIKE IT.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast-layer" class="toast-layer" aria-live="polite"></div>
+
+  <!-- ===================================================== -->
+  <!-- FIND WALDO CAPTCHA TO UNMUTE MODAL                    -->
+  <!-- ===================================================== -->
+  <section id="waldo-captcha-modal" class="waldo-captcha-modal is-hidden" role="dialog" aria-modal="true" aria-label="FIND WALDO CAPTCHA TO UNMUTE">
+    <div class="waldo-card">
+      <div class="waldo-head font-mono-x">
+        <span class="waldo-badge">🚨 KIRKTUBE AUDIO DRM™ // VIDEO PAUSED</span>
+        <span id="waldo-miss-counter" class="waldo-misses">MISSES: 0 / 3 (AUTO-SHUFFLE AT 3)</span>
+      </div>
+
+      <div class="waldo-banner">
+        <div class="waldo-mugshot" aria-hidden="true">
+          <div class="waldo-mugshot-art">🧢👓🔴⚪</div>
+          <div class="waldo-mugshot-tag font-mono-x">WANTED: WALDO</div>
+        </div>
+        <div class="waldo-instructions">
+          <h3 class="waldo-title glitch" data-text="PROVE HUMANITY TO UNMUTE: CLICK DIRECTLY ON WALDO!">PROVE HUMANITY TO UNMUTE: CLICK DIRECTLY ON WALDO!</h3>
+          <p id="waldo-status-text" class="waldo-sub font-mono-x">
+            VIDEO IS PAUSED &amp; AUDIO IS LOCKED. FIND THE REAL WALDO (RED &amp; WHITE STRIPED SHIRT, BOBBLE BEANIE, ROUND GLASSES &amp; CANE) HIDING AMONG THE DECOYS BELOW!
+          </p>
+        </div>
+      </div>
+
+      <div class="waldo-stage-wrap">
+        <canvas id="waldo-canvas" class="waldo-canvas" width="720" height="360"></canvas>
+      </div>
+
+      <div class="waldo-footer font-mono-x">
+        <button id="btn-waldo-reshuffle" type="button" class="waldo-btn-secondary">
+          🔀 RESHUFFLE CROWD (MAKE IT WORSE)
+        </button>
+        <button id="btn-waldo-stay-muted" type="button" class="waldo-btn-muted">
+          🔇 GIVE UP &amp; WATCH IN SILENCE
+        </button>
+        <button id="btn-waldo-skip" type="button" class="waldo-btn-skip">
+          ⏭ SKIP CAPTCHA (REQUIRES 7 CONFIRMATIONS)
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- MANDATORY MULTI-STEP CONFIRMATION DIALOG              -->
+  <!-- ===================================================== -->
+  <section id="confirm-modal" class="confirm-modal is-hidden" role="dialog" aria-modal="true" aria-label="MANDATORY CHOICE CONFIRMATION">
+    <div class="confirm-card">
+      <div class="confirm-head font-mono-x">
+        <span id="confirm-step-badge" class="confirm-step-badge">⚠ VERIFICATION STEP 1 OF 2</span>
+        <span>KIRKTUBE BUREAUCRACY ENGINE™</span>
+      </div>
+      <h3 id="confirm-title" class="confirm-title glitch" data-text="WAIT! ARE YOU 100% SURE ABOUT THAT CHOICE?">WAIT! ARE YOU 100% SURE ABOUT THAT CHOICE?</h3>
+      <div id="confirm-choice-preview" class="confirm-choice-preview font-mono-x"></div>
+      <p id="confirm-desc" class="confirm-desc font-mono-x"></p>
+      <div class="confirm-actions font-mono-x">
+        <button id="btn-confirm-cancel" type="button" class="confirm-btn-cancel">❌ NO, GO BACK &amp; RETHINK MY LIFE</button>
+        <button id="btn-confirm-yes" type="button" class="confirm-btn-yes">✅ YES, I AM SURE</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRIPTS (CLASSIC SCRIPTS, SHARED BAD NAMESPACE — WORKS OVER HTTP:// AND FILE://) -->
+  <script src="js/core.js"></script>
+  <script src="js/aiCharacters.js"></script>
+  <script src="js/chatPanel.js"></script>
+  <script src="js/soundManager.js"></script>
+  <script src="js/speechManager.js"></script>
+  <script src="js/videoPlayer.js"></script>
+  <script src="js/eventManager.js"></script>
+  <script src="js/cursedEffects.js"></script>
+  <script src="js/intro.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

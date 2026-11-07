@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- KIRKTUBE LOGO: A GLITCHED, SLIGHTLY BROKEN PLAY BUTTON -->
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="#0b0b10" stroke="#39ff14" stroke-width="3"/>
+  <path d="M25 18 L47 32 L25 46 Z" fill="#b026ff" transform="translate(-2.5 1.5)" opacity="0.85"/>
+  <path d="M25 18 L47 32 L25 46 Z" fill="#39ff14"/>
+  <rect x="20" y="29" width="30" height="3" fill="#0b0b10"/>
+  <rect x="31" y="31" width="10" height="2" fill="#39ff14" transform="translate(4 0)"/>
+  <circle cx="51" cy="13" r="3" fill="#ff2e4d"/>
+</svg>
